@@ -4,7 +4,7 @@
 \alias{plot_sequence_quality}
 \title{Plot FastQC per base sequence quality}
 \usage{
-plot_sequence_quality(..., type = c("ggplot2", "rbokeh"), group = NULL)
+plot_sequence_quality(..., type = c("ggplot2", "rbokeh"))
 }
 \description{
 Plot FastQC per base sequence quality

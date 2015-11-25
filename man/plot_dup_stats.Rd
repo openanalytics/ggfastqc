@@ -4,7 +4,7 @@
 \alias{plot_dup_stats}
 \title{Plot FastQC total sequences stats}
 \usage{
-plot_dup_stats(..., type = c("ggplot2", "rbokeh"), group = NULL)
+plot_dup_stats(..., type = c("ggplot2", "rbokeh"))
 }
 \description{
 Plot FastQC total sequences stats

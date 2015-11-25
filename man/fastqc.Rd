@@ -4,7 +4,7 @@
 \alias{fastqc}
 \title{Extract FastQC summary tables}
 \usage{
-fastqc(dir)
+fastqc(dir, groups = NULL)
 }
 \description{
 Extract FastQC summary tables

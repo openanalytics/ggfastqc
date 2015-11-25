@@ -4,7 +4,7 @@
 \alias{plot_gc_stats}
 \title{Plot FastQC GC\% stats}
 \usage{
-plot_gc_stats(..., type = c("ggplot2", "rbokeh"), group = NULL)
+plot_gc_stats(..., type = c("ggplot2", "rbokeh"))
 }
 \description{
 Plot FastQC GC\% stats
