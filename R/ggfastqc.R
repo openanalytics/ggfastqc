@@ -3,8 +3,7 @@
 #' @aliases ggfastqc ggfastqc-package
 #' @docType package
 #' @name ggfastqc
+#' @importFrom tools file_ext
 #' @import methods
 #' @import data.table
-#' @import ggplot2
-#' @seealso \code{\link{get_counts}}
 NULL

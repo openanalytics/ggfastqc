@@ -8,7 +8,4 @@
 \description{
 ggfastqc: ggplots of FastQC summary data
 }
-\seealso{
-\code{\link{get_counts}}
-}
 

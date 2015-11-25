@@ -4,13 +4,13 @@ Version: 0.1.0
 Author: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
 Maintainer: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
 Depends:
-    R (>= 3.2.0)
+    R (>= 3.1)
 Imports:
+  tools,
   methods,
-  data.table (>= 1.9.5),
-  ggplot2
+  data.table (>= 1.9.6)
 Suggests:
-    roxygen2
+    roxygen2, ggplot2
 Description: ggplot FASTQ file statistics from summaries created by FastQC tool.
 License: GPL (>=2)
 lazyData: true
