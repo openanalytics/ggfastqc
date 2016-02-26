@@ -8,6 +8,7 @@ plot_gc_stats <- function(..., type=c("ggplot2", "rbokeh")) {
     setattr(gc, 'names', names(ll))
   gc = rbindlist(gc, idcol=TRUE)[`#Measure` == "%GC"]
   setnames(gc, "Value", "percent")[, percent := as.numeric(as.character(percent))]
+  gc[, splits := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 20L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -16,7 +17,7 @@ plot_gc_stats <- function(..., type=c("ggplot2", "rbokeh")) {
       pl = ggplot(gc, aes(x=sample_name, y=percent)) + 
             geom_bar(stat="identity", aes(fill=group, group=sample_name)) + 
             ylim(0, 100) + 
-            facet_wrap(~ .id, ncol=1L, scales="free_x") + 
+            facet_wrap(splits ~ .id, scales="free_x", ncol=1L) + 
             theme_bw() + 
             theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
                 axis.text.y = element_text(size = 14),  
@@ -41,6 +42,7 @@ plot_total_sequence_stats <- function(..., type=c("ggplot2", "rbokeh")) {
     setattr(ts, 'names', names(ll))
   ts = rbindlist(ts, idcol=TRUE)[`#Measure` == "Total Sequences"]
   setnames(ts, "Value", "counts")[, counts  := as.numeric(as.character(counts))/1e6L]
+  ts[, splits := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 20L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -48,7 +50,7 @@ plot_total_sequence_stats <- function(..., type=c("ggplot2", "rbokeh")) {
         stop("Package 'ggplot2' is not available.")
       pl = ggplot(ts, aes(x=sample_name, y=counts)) + 
             geom_bar(stat="identity", aes(fill=group, group=sample_name)) + 
-            facet_wrap(~ .id, ncol=1L, scales="free_x") + 
+            facet_wrap(splits ~ .id, ncol=1L, scales="free_x") + 
             theme_bw() + 
             theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
                 axis.text.y = element_text(size = 14),  
@@ -71,16 +73,17 @@ plot_dup_stats <- function(..., type=c("ggplot2", "rbokeh")) {
   dup = lapply(ll, function(l) {
           rbindlist(lapply(l, function(y) { 
             v = y[["Sequence Duplication Levels"]][1]
+            col = grep("[pP]ercentage", names(v))
             list(group=v$group, sample_group = v$sample_group, 
-                 sample_name=v$sample_name, pairs = v$pairs, 
-                 Duplication_Percent=as.numeric(tail(names(v), 1L)))
+                 sample_name=v$sample_name, pair = v$pair, 
+                 Duplication_Percent=as.numeric(names(v)[col+1L]))
           }))
         })
   if (is.null(names(ll)))
     setattr(dup, 'names', names(ll))
   dup = rbindlist(dup, idcol=TRUE)
   setnames(dup, "Duplication_Percent", "dup_percent")
-
+  dup[, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 20L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -89,7 +92,7 @@ plot_dup_stats <- function(..., type=c("ggplot2", "rbokeh")) {
       pl = ggplot(dup, aes(x=sample_name, y=dup_percent)) + 
             geom_bar(stat="identity", aes(fill=group, group=sample_name)) + 
             ylim(0, 100) + 
-            facet_wrap(~ .id, ncol=1L, scales="free_x") + 
+            facet_wrap(splits ~ .id, ncol=1L, scales="free_x") + 
             theme_bw() + 
             theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
                 axis.text.y = element_text(size = 14),  
@@ -109,24 +112,26 @@ plot_dup_stats <- function(..., type=c("ggplot2", "rbokeh")) {
 plot_sequence_quality <- function(..., type=c("ggplot2", "rbokeh")) {
 
   ll = list(...)
-  seq = lapply(ll, function(l) rbindlist(lapply(l, `[[`, "Per base sequence quality")))
+  seqn = lapply(ll, function(l) rbindlist(lapply(l, `[[`, "Per base sequence quality")))
   if (is.null(names(ll)))
-    setattr(seq, 'names', names(ll))
-  seq = rbindlist(seq, idcol=TRUE)
-  colnames = setdiff(names(seq), c(".id", "group", "sample_group", "sample_name", "pairs", "#Base"))
-  seq[, (colnames) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols=(colnames)]
-  seq[, pairs := factor(pairs)
+    setattr(seqn, 'names', names(ll))
+  seqn = rbindlist(seqn, idcol=TRUE)
+  colnames = setdiff(names(seqn), c(".id", "group", "sample_group", "sample_name", "pair", "#Base"))
+  seqn[, (colnames) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols=(colnames)]
+  seqn[, pair := factor(pair)
     ][, `#Base` := factor(`#Base`, levels=unique(`#Base`))]
+  val = rep(1:uniqueN(seqn[["sample_name"]]), each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
+  seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 20L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
       if (!require(ggplot2))
         stop("Package 'ggplot2' is not available.")
-      pl = ggplot(seq, aes(x=`#Base`, colour=pairs, group=sample_name)) + 
+      pl = ggplot(seqn, aes(x=`#Base`, colour=pair, group=sample_name)) + 
              geom_point(aes(y=Median)) + 
              geom_errorbar(aes(ymax=`90th Percentile`, ymin=`10th Percentile`)) + 
              geom_line(aes(y=Mean, group=sample_name)) + 
-             facet_wrap( ~ .id, scales="free_x", ncol=1L) + 
+             facet_wrap(splits ~ .id, scales="free_x", ncol=1L) + 
              geom_hline(aes(yintercept=30L), colour="gray25", linetype="dotted") + 
              theme_bw() + 
              theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
@@ -134,8 +139,8 @@ plot_sequence_quality <- function(..., type=c("ggplot2", "rbokeh")) {
                 text = element_text(size=18), 
                 panel.grid.major = element_blank()) + 
              xlab("#Base") + ylab("Read quality") + 
-             ylim(0L, max(seq$Mean, na.rm=TRUE)+1L) + 
-             scale_colour_brewer(name="Pairs", palette="Set1")
+             ylim(0L, max(seqn$Mean, na.rm=TRUE)+1L) + 
+             scale_colour_brewer(name="Pair", palette="Set1")
     }, 
     rboken = {
       stop("Not yet implemented.")
