@@ -1,16 +1,18 @@
 Package: ggfastqc
 Title: ggplots of FastQC summary data
-Version: 0.1.0
+Version: 0.1.1
 Author: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
 Maintainer: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
 Depends:
     R (>= 3.1)
 Imports:
-  tools,
-  methods,
-  data.table (>= 1.9.6)
+    tools,
+    methods,
+    data.table (>= 1.9.6)
 Suggests:
-    roxygen2, ggplot2
+    roxygen2,
+    ggplot2
 Description: ggplot FASTQ file statistics from summaries created by FastQC tool.
 License: GPL (>=2)
 lazyData: true
+RoxygenNote: 5.0.1
