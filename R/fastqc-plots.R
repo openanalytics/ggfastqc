@@ -8,7 +8,7 @@ plot_gc_stats <- function(..., type=c("ggplot2", "rbokeh")) {
     setattr(gc, 'names', names(ll))
   gc = rbindlist(gc, idcol=TRUE)[`#Measure` == "%GC"]
   setnames(gc, "Value", "percent")[, percent := as.numeric(as.character(percent))]
-  gc[, splits := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 20L))]
+  gc[, splits := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 26L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -42,7 +42,7 @@ plot_total_sequence_stats <- function(..., type=c("ggplot2", "rbokeh")) {
     setattr(ts, 'names', names(ll))
   ts = rbindlist(ts, idcol=TRUE)[`#Measure` == "Total Sequences"]
   setnames(ts, "Value", "counts")[, counts  := as.numeric(as.character(counts))/1e6L]
-  ts[, splits := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 20L))]
+  ts[, splits := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -83,7 +83,7 @@ plot_dup_stats <- function(..., type=c("ggplot2", "rbokeh")) {
     setattr(dup, 'names', names(ll))
   dup = rbindlist(dup, idcol=TRUE)
   setnames(dup, "Duplication_Percent", "dup_percent")
-  dup[, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 20L))]
+  dup[, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
@@ -121,7 +121,7 @@ plot_sequence_quality <- function(..., type=c("ggplot2", "rbokeh")) {
   seqn[, pair := factor(pair)
     ][, `#Base` := factor(`#Base`, levels=unique(`#Base`))]
   val = rep(1:uniqueN(seqn[["sample_name"]]), each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
-  seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 20L))]
+  seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 26L))]
   type = match.arg(type)
   switch(type, 
     ggplot2 = {
