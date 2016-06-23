@@ -1,18 +1,27 @@
 Package: ggfastqc
-Title: ggplots of FastQC summary data
-Version: 0.1.1
-Author: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
+Title: Generate Summary Plots of FastQC Reports
+Version: 0.99.0
+Authors@R: c(
+    person("Arunkumar", "Srinivasan", , "asrinivasan@openanalytics.eu", 
+    c("aut", "cre")), person("Open Analytics", role = "cph"))
 Maintainer: Arunkumar Srinivasan <asrinivasan@openanalytics.eu>
 Depends:
-    R (>= 3.1)
+    R (>= 3.3)
 Imports:
     tools,
     methods,
     data.table (>= 1.9.6)
 Suggests:
     roxygen2,
-    ggplot2
-Description: ggplot FASTQ file statistics from summaries created by FastQC tool.
-License: GPL (>=2)
+    ggplot2,
+    plotly,
+    ggrepel,
+    htmltools,
+    RColorBrewer,
+    knitr
+Description: Plot of FASTQ file summaries created by FastQC tool.
+License: GPL-3
 lazyData: true
 RoxygenNote: 5.0.1
+VignetteBuilder: knitr
+biocViews: Sequencing, RNASeq, Software, Visualization
