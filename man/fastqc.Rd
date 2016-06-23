@@ -7,20 +7,29 @@
 fastqc(sample_info)
 }
 \arguments{
-\item{sample_info}{Full path to file containing details about \code{samples} and their \code{paths}. See \code{Details} section.}
+\item{sample_info}{Full path to file containing details about 
+\code{samples} and their \code{paths}. See \code{Details} section.}
 }
 \description{
-\code{fastqc} function parses all the various summary statistics produced by \code{FastQC} and returns a nested list data structure corresponding to each sample.
+\code{fastqc} function parses all the summary statistics 
+produced by \code{FastQC} tool and returns a nested list data structure 
+corresponding to each sample.
 }
 \details{
-The file provided to \code{sample_info} argument should contain at least these three columns: 
+The file provided to \code{sample_info} argument should contain 
+at least these three columns: 
 \itemize{
   \item \code{sample} - contains the \code{sample} name.
-  \item \code{pair} - in case of paired end reads, \code{1} or \code{2} corresponding to first and second pair, and in case of single end reads, \code{NA}.
-  \item \code{path} - full path to the fastqc summary report (\code{.txt} file) for each sample.
+  \item \code{pair} - in case of paired end reads, \code{1} or \code{2} 
+  corresponding to first and second pair, and in case of single end reads, 
+  \code{NA}.
+  \item \code{path} - full path to the fastqc summary report (\code{.txt} 
+  file) for each sample.
 }
 
-It can also optionally contain a \code{group} column. If present, then the plot generated with fastqc would be colored / facetted according to samples belonging to the same group.
+It can also optionally contain a \code{group} column. If present, then the 
+plot generated with fastqc would be colored / facetted according to samples 
+belonging to the same group.
 }
 \examples{
 \dontrun{
@@ -29,6 +38,7 @@ It can also optionally contain a \code{group} column. If present, then the plot 
 }
 }
 \seealso{
-\code{\link{plot_dup_stats}}, \code{\link{plot_gc_stats}}, \code{\link{plot_sequence_quality}}, \code{\link{plot_total_sequence_stats}}
+\code{\link{plot_dup_stats}} \code{\link{plot_gc_stats}} 
+\code{\link{plot_sequence_quality}} \code{\link{plot_total_sequence_stats}}
 }
 
