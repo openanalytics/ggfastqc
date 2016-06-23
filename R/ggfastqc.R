@@ -1,4 +1,4 @@
-#' ggfastqc: ggplots of FastQC summary data
+#' ggfastqc: Generate Summary Plots of FastQC Reports
 #' 
 #' @aliases ggfastqc ggfastqc-package
 #' @docType package

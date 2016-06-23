@@ -4,8 +4,8 @@
 \name{ggfastqc}
 \alias{ggfastqc}
 \alias{ggfastqc-package}
-\title{ggfastqc: ggplots of FastQC summary data}
+\title{ggfastqc: Generate Summary Plots of FastQC Reports}
 \description{
-ggfastqc: ggplots of FastQC summary data
+ggfastqc: Generate Summary Plots of FastQC Reports
 }
 
