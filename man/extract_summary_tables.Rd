@@ -7,15 +7,20 @@
 extract_summary_tables(doc, sample, pair, group)
 }
 \arguments{
-\item{doc}{The file corresponding to \emph{that \code{sample}} read in as such (using \code{readLines}).}
+\item{doc}{The file corresponding to \emph{that \code{sample}} read in 
+as such (using \code{readLines}).}
 
-\item{sample}{Sample name}
+\item{sample}{Sample name.}
 
-\item{pair}{Read pair}
+\item{pair}{Read pair.}
 
-\item{group}{Group / condition this sample belongs to}
+\item{group}{Group / condition this sample belongs to.}
 }
 \description{
-This is the workhorse that powers \code{fastqc}. Given a \code{sample} and \code{path}, \code{extract_summary_tables} extracts all summary statistics and returns them as a list of \code{data.table}s.
+\bold{NOTE:} For internal use only.
+
+This is the workhorse that powers \code{fastqc}. Given a \code{sample} and 
+\code{path}, \code{extract_summary_tables} extracts all summary statistics 
+and returns them as a list of \code{data.table}s.
 }
 

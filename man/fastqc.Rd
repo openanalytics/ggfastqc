@@ -8,12 +8,16 @@ fastqc(sample_info)
 }
 \arguments{
 \item{sample_info}{Full path to file containing details about 
-\code{samples} and their \code{paths}. See \code{Details} section.}
+\code{samples} and their \code{paths}.}
 }
 \description{
-\code{fastqc} function parses all the summary statistics 
-produced by \code{FastQC} tool and returns a nested list data structure 
-corresponding to each sample.
+\code{fastqc} function parses all the summary statistics of 
+reports produced by \code{FastQC} tool and returns a \code{data.table} with 
+two columns: \code{param}, and \code{value}. 
+
+Each row of the \code{value} column contains the data corresponding to that 
+\code{param}, and is itself 
+a \code{data.table}.
 }
 \details{
 The file provided to \code{sample_info} argument should contain 
@@ -25,16 +29,21 @@ at least these three columns:
   \code{NA}.
   \item \code{path} - full path to the fastqc summary report (\code{.txt} 
   file) for each sample.
+   
+  If just the file name (\code{.txt}) is provided, it is assumed that the 
+  file is in the same folder as the input file provided to 
+  \code{sample_info} argument.
 }
 
-It can also optionally contain a \code{group} column. If present, then the 
-plot generated with fastqc would be colored / facetted according to samples 
-belonging to the same group.
+It can also optionally contain a \code{group} column. If present, the plots 
+generated will take it into account and \code{color} / \code{facet} 
+accordingly.
 }
 \examples{
 \dontrun{
-  require(ggfastqc)
-  obj = fastqc("~/Documents/oa/omics/CRC_AZA/fastqc-sample-file.tsv")
+require(ggfastqc)
+path = system.file("tests/fastqc-sample", package="ggfastqc")
+obj = fastqc(sample_info = file.path(path, "annotation.txt"))
 }
 }
 \seealso{
