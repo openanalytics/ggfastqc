@@ -7,8 +7,9 @@ plot_gc_stats <- function(..., type=c("ggplot2", "plotly")) {
     if (is.null(names(ll)))
         setattr(gc, 'names', names(ll))
     gc = rbindlist(gc, idcol=TRUE)[`#Measure` == "%GC"]
-    setnames(gc, "Value", "percent")[, percent := as.numeric(as.character(percent))]
-    gc[, splits := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 26L))]
+    setnames(gc, "Value", "percent")
+    gc[, "percent" := as.numeric(as.character(percent))
+      ][, "splits" := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 26L))]
     type = match.arg(type)
     if (!requireNamespace(ggplot2))
         stop("Package 'ggplot2' is not available.")
@@ -40,8 +41,9 @@ plot_total_sequence_stats <- function(..., type=c("ggplot2", "plotly")) {
     if (is.null(names(ll)))
         setattr(ts, 'names', names(ll))
     ts = rbindlist(ts, idcol=TRUE)[`#Measure` == "Total Sequences"]
-    setnames(ts, "Value", "counts")[, counts  := as.numeric(as.character(counts))/1e6L]
-    ts[, splits := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
+    setnames(ts, "Value", "counts")
+    ts[, "counts"  := as.numeric(as.character(counts))/1e6L
+      ][, "splits" := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
     type = match.arg(type)
     if (!requireNamespace(ggplot2))
         stop("Package 'ggplot2' is not available.")
@@ -109,25 +111,29 @@ plot_dup_stats <- function(..., type=c("ggplot2", "plotly")) {
 plot_sequence_quality <- function(..., type=c("ggplot2", "plotly")) {
 
     ll = list(...)
-    seqn = lapply(ll, function(l) rbindlist(lapply(l, `[[`, "Per base sequence quality")))
+    seqn = lapply(ll, function(l) 
+            rbindlist(lapply(l, `[[`, "Per base sequence quality")))
     if (is.null(names(ll)))
         setattr(seqn, 'names', names(ll))
     seqn = rbindlist(seqn, idcol=TRUE)
-    colnames = setdiff(names(seqn), c(".id", "group", "sample_group", "sample_name", "pair", "#Base"))
-    seqn[, (colnames) := lapply(.SD, function(x) as.numeric(as.character(x))), .SDcols=(colnames)]
+    cols = c(".id", "group", "sample_group", "sample_name", "pair", "#Base")
+    cols = setdiff(names(seqn), cols)
+    fac2num <- function(x) as.numeric(as.character(x))
+    seqn[, (cols) := lapply(.SD, fac2num, .SDcols=cols]
     seqn[, pair := factor(pair)
         ][, `#Base` := factor(`#Base`, levels=unique(`#Base`))]
-    val = rep(1:uniqueN(seqn[["sample_name"]]), each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
+    val = rep(1:uniqueN(seqn[["sample_name"]]), 
+            each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
     seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 26L))]
     type = match.arg(type)
     if (!requireNamespace(ggplot2))
         stop("Package 'ggplot2' is not available.")
     pl = ggplot(seqn, aes(x=`#Base`, colour=pair, group=sample_name)) + 
             geom_point(aes(y=Median)) + 
-            geom_errorbar(aes(ymax=`90th Percentile`, ymin=`10th Percentile`)) + 
+            geom_errorbar(aes(ymax=`90th Percentile`, ymin=`10th Percentile`))+
             geom_line(aes(y=Mean, group=sample_name)) + 
             facet_wrap(splits ~ .id, scales="free_x", ncol=1L) + 
-            geom_hline(aes(yintercept=30L), colour="gray25", linetype="dotted") + 
+            geom_hline(aes(yintercept=30L), colour="gray25", linetype="dotted")+
             theme_bw() + 
             theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
                 axis.text.y = element_text(size = 14),  
