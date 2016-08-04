@@ -180,7 +180,7 @@ plot_sequence_quality <- function(..., type=c("ggplot2", "plotly")) {
     cols = c(".id", "group", "sample_group", "sample_name", "pair", "#Base")
     cols = setdiff(names(seqn), cols)
     fac2num <- function(x) as.numeric(as.character(x))
-    seqn[, (cols) := lapply(.SD, fac2num, .SDcols=cols]
+    seqn[, (cols) := lapply(.SD, fac2num), .SDcols=cols]
     seqn[, pair := factor(pair)
         ][, `#Base` := factor(`#Base`, levels=unique(`#Base`))]
     val = rep(1:uniqueN(seqn[["sample_name"]]), 
