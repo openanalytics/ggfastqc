@@ -75,35 +75,36 @@ plot_gc_stats <- function(..., interactive=TRUE,
 
 #' @title Plot FastQC total sequences stats
 #' @export
-plot_total_sequence_stats <- function(..., type=c("ggplot2", "plotly")) {
+plot_total_sequence_stats <- function(..., interactive=TRUE, 
+                    geom=c("jitter", "point", "bar")) {
 
     ll = list(...)
-    ts = lapply(ll, function(l) rbindlist(lapply(l, `[[`, "Basic Statistics")))
+    ts = lapply(ll, function(l) {
+            stopifnot(inherits(l, "fastqc"))
+            ans = l[param == "basic_statistics", value]
+            data.table::rbindlist(ans)
+        })
     if (is.null(names(ll)))
-        setattr(ts, 'names', names(ll))
-    ts = rbindlist(ts, idcol=TRUE)[`#Measure` == "Total Sequences"]
-    setnames(ts, "Value", "counts")
-    ts[, "counts"  := as.numeric(as.character(counts))/1e6L
+        setattr(ts, 'names', paste0("fastqc_obj", seq_along(ll)))
+    ts = rbindlist(ts, idcol=TRUE)
+    ts[, "total_sequences"  := total_sequences/1e6L # in million reads
       ][, "splits" := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
-    type = match.arg(type)
-    if (!requireNamespace(ggplot2))
-        stop("Package 'ggplot2' is not available.")
-    pl = ggplot(ts, aes(x=sample_name, y=counts)) + 
-            geom_bar(stat="identity", aes(fill=group, group=sample_name)) + 
-            facet_wrap(splits ~ .id, ncol=1L, scales="free_x") + 
-            theme_bw() + 
-            theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
-                axis.text.y = element_text(size = 14),  
-                text = element_text(size=18), 
-                panel.grid.major = element_blank()) + 
-            xlab("Sample") + ylab("Counts (in million)") + 
-            scale_fill_brewer(name="Group", palette="Set1")
-    if (type == "plotly") {
-        if (!requireNamespace(plotly))
-            stop("Package 'plotly' is not available.")
-        pl = plotly::ggplotly(pl)
-    }
-    pl
+    geom = match.arg(geom)
+    pl = switch(geom, 
+            jitter = {
+                aes = list(x="group", y="total_sequences", 
+                            sample_name="sample_name", fill="group")
+                theme = list(xlab="Groups", ylab="Sequence count (in million)", 
+                            title="Sequence count distribution among samples")
+                fastqc_jitter(ts, aes, theme, interactive)
+            }, 
+            point = {
+
+            }, 
+            bar = {
+
+            }
+        )
 }
 
 #' @title Plot FastQC total sequences stats
