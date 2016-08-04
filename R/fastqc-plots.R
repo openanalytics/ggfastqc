@@ -19,31 +19,11 @@ plot_gc_stats <- function(..., interactive=TRUE,
     geom = match.arg(geom)
     pl = switch(geom, 
         jitter = {
-            if (!interactive) {
-                warn = paste("When geom='jitter', only interactive", 
-                        "plots are possible. Setting interactive=TRUE")
-                warning(warn)
-                interactive=TRUE
-            }
-            if (!requireNamespace("plotly"))
-                stop("Package 'plotly' is not available.")
-            p = ggplot(gc, aes(x=group, y=percent_gc, sample=sample_name)) + 
-                geom_point(position = position_jitter(), aes(fill=group), 
-                    shape=21L, size=4L) + 
-                ylim(0, 100) + xlab("Sample") + ylab("GC %") + theme_bw() + 
-                facet_wrap(~ .id, scales="free_y", ncol=1L) + 
-                theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
-                    legend.text=element_text(size = 12L), 
-                    legend.background=element_blank(),
-                    legend.key=element_blank(),
-                    panel.grid.major.y=element_line(
-                        colour="#333333", size=0.12), 
-                    panel.grid.major.x=element_blank(), 
-                    panel.grid.minor=element_line(
-                        colour="#999999", size=0.06), 
-                    legend.position="none") + 
-                ggtitle("GC content distribution among samples")
-            plotly::ggplotly(p, tooltip = c("sample", "y"))
+            aes = list(x="group", y="percent_gc", 
+                        sample_name="sample_name", fill="group")
+            theme = list(xlab="Sample", ylab="GC %", 
+                        title="GC content distribution among samples")
+            fastqc_jitter(gc, aes, theme, interactive)
         }, 
         point = {
             p = ggplot(gc, aes(x=sample_name, y=percent_gc)) + 
@@ -209,4 +189,37 @@ plot_sequence_quality <- function(..., type=c("ggplot2", "plotly")) {
         pl = plotly::ggplotly(pl)
     }
     pl
+}
+
+
+## internal geoms ----------------------- 
+
+fastqc_jitter <- function(dt, aes, theme, interactive=TRUE) {
+
+    if (!interactive) {
+        warn = paste("When geom='jitter', only interactive", 
+                "plots are possible. Setting interactive=TRUE")
+        warning(warn)
+        interactive=TRUE
+    }
+    if (!requireNamespace("plotly"))
+        stop("Package 'plotly' is not available.")
+    p = ggplot(dt, aes_string(x=aes$x, y=aes$y, sample=aes$sample_name)) + 
+        geom_point(position = position_jitter(), aes_string(fill=aes$fill), 
+            shape=21L, size=4L) + 
+        ylim(0L, 100L) + xlab(theme$xlab) + ylab(theme$ylab) + theme_bw() + 
+        facet_wrap(~ .id, scales="free_y", ncol=1L) + 
+        theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
+            legend.text=element_text(size = 12L), 
+            legend.background=element_blank(),
+            legend.key=element_blank(),
+            panel.grid.major.y=element_line(
+                colour="#333333", size=0.12), 
+            panel.grid.major.x=element_blank(), 
+            panel.grid.minor=element_line(
+                colour="#999999", size=0.06), 
+            legend.position="none") + 
+        ggtitle(theme$title)
+
+    plotly::ggplotly(p, tooltip = c("sample", "y"))
 }
