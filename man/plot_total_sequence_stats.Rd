@@ -4,6 +4,7 @@
 \alias{plot_total_sequence_stats}
 \title{Plot FastQC total sequences stats}
 \usage{
-plot_total_sequence_stats(..., type = c("ggplot2", "plotly"))
+plot_total_sequence_stats(..., interactive = TRUE, geom = c("jitter",
+  "point", "bar"))
 }
 

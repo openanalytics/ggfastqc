@@ -4,6 +4,6 @@
 \alias{plot_dup_stats}
 \title{Plot FastQC total sequences stats}
 \usage{
-plot_dup_stats(..., type = c("ggplot2", "plotly"))
+plot_dup_stats(..., interactive = TRUE, geom = c("jitter", "point", "bar"))
 }
 
