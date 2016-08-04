@@ -10,10 +10,10 @@ Depends:
 Imports:
     tools,
     methods,
+    ggplot2,
     data.table (>= 1.9.6)
 Suggests:
     roxygen2,
-    ggplot2,
     plotly,
     ggrepel,
     htmltools,

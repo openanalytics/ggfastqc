@@ -5,5 +5,6 @@
 #' @name ggfastqc
 #' @importFrom tools file_ext
 #' @import methods
+#' @import ggplot2
 #' @import data.table
 NULL
