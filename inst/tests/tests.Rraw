@@ -24,11 +24,27 @@ whichfail = NULL
 .timingtests = FALSE
 started.at = Sys.time()
 
-## rnaseq ----------------------------------------------------
+## fastqc ----------------------------------------------------
 info = "./fastqc-sample/annotation.txt"
-fasqc_obj = fastqc(info)
+fastqc_obj = fastqc(info)
 
 test(1.0, class(fastqc_obj)[1L], "fastqc")
+test(1.1, all(sapply(fastqc_obj[["value"]], inherits, "data.table")), TRUE)
+
+## gc_stats ----------------------------------------------------
+ggplot2_names = c("data", "panel", "plot")
+plotly_names  = c("x", "width", "height", "sizingPolicy", "dependencies", 
+                    "elementId", "preRenderHook", "jsHooks")
+test(2.1, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="jitter"))), plotly_names)
+test(2.2, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="point"))), plotly_names)
+test(2.3, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="bar"))), plotly_names, warning="applied to")
+test(2.4, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=FALSE, 
+        geom="point"))), ggplot2_names)
+test(2.5, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=FALSE, 
+        geom="bar"))), ggplot2_names)
 
 ## test summary ----------------------------------------------
 options(warn=0L)
