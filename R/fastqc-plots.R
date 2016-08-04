@@ -17,59 +17,24 @@ plot_gc_stats <- function(..., interactive=TRUE,
     gc[, (cols) := lapply(.SD, as_factor), .SDcols=cols
       ][, "splits" := findInterval(1:nrow(gc), seq(1, nrow(gc), by = 26L))]
     geom = match.arg(geom)
+
+    aes = list(
+            x = if(geom == "jitter") "group" else "sample_name", 
+            y = "percent_gc", 
+            sample_name = "sample_name", 
+            fill = "group"
+        )
+    theme = list(
+            xlab = if (geom == "jitter") "Groups" else "Sample", 
+            ylab = "GC %", 
+            title = "GC content among samples"
+        )
     pl = switch(geom, 
-        jitter = {
-            aes = list(x="group", y="percent_gc", 
-                        sample_name="sample_name", fill="group")
-            theme = list(xlab="Groups", ylab="GC %", 
-                        title="GC content among samples")
-            fastqc_jitter(gc, aes, theme, interactive)
-        }, 
-        point = {
-            p = ggplot(gc, aes(x=sample_name, y=percent_gc)) + 
-                geom_point(aes(fill=group), shape=21L, size=4L) + 
-                ylim(0, 100) + xlab("Sample") + ylab("GC %") + theme_bw() + 
-                (if (max(gc$splits) == 1L)
-                    facet_wrap(~ .id, scales="free_y", ncol=1L)
-                else  facet_wrap(splits ~ .id, scales="free_x", ncol=1L)) + 
-                theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
-                    legend.text=element_text(size = 12L), 
-                    legend.background=element_blank(),
-                    legend.key=element_blank(),
-                    panel.grid.major.y=element_line(
-                        colour="#333333", size=0.12), 
-                    panel.grid.major.x=element_blank(), 
-                    panel.grid.minor=element_line(
-                        colour="#999999", size=0.06), 
-                    legend.position="bottom") + 
-                ggtitle("GC content among samples")
-            if (interactive)
-                p = plotly::ggplotly(p, tooltip = c("x", "y"))
-            p
-        }, 
-        bar = {
-            p = ggplot(gc, aes(x=sample_name, y=percent_gc)) + 
-                geom_bar(stat="identity", aes(fill=group)) + 
-                ylim(0, 100) + xlab("Sample") + ylab("GC %") + theme_bw() + 
-                (if (max(gc$splits) == 1L)
-                    facet_wrap(~ .id, scales="free_y", ncol=1L)
-                else  facet_wrap(splits ~ .id, scales="free_x", ncol=1L)) + 
-                theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
-                    legend.text=element_text(size = 12L), 
-                    legend.background=element_blank(),
-                    legend.key=element_blank(),
-                    panel.grid.major.y=element_line(
-                        colour="#333333", size=0.12), 
-                    panel.grid.major.x=element_blank(), 
-                    panel.grid.minor=element_line(
-                        colour="#999999", size=0.06), 
-                    legend.position="bottom") + 
-                ggtitle("GC content among samples")
-            if (interactive)
-                p = plotly::ggplotly(p, tooltip = c("x", "y"))
-            p
-        }, 
-    )
+            jitter = fastqc_jitter(gc, aes, theme, interactive), 
+            point = fastqc_point(gc, aes, theme, interactive),
+            bar = fastqc_bar(gc, aes, theme, interactive)
+            # no need for stop(). match.arg() check above takes care of it.
+        )
     pl
 }
 
@@ -93,20 +58,22 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
       ][, "total_sequences"  := total_sequences/1e6L # in million reads
       ][, "splits" := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
     geom = match.arg(geom)
+
+    aes = list(
+            x = if(geom == "jitter") "group" else "sample_name", 
+            y = "total_sequences", 
+            sample_name = "sample_name", 
+            fill = "group"
+        )
+    theme = list(
+            xlab = if (geom == "jitter") "Groups" else "Sample", 
+            ylab = "Sequence count (in million)", 
+            title = "Sequence count among samples"
+        )
     pl = switch(geom, 
-            jitter = {
-                aes = list(x="group", y="total_sequences", 
-                            sample_name="sample_name", fill="group")
-                theme = list(xlab="Groups", ylab="Sequence count (in million)", 
-                            title="Sequence count among samples")
-                fastqc_jitter(ts, aes, theme, interactive)
-            }, 
-            point = {
-
-            }, 
-            bar = {
-
-            }
+            jitter = fastqc_jitter(ts, aes, theme, interactive), 
+            point = fastqc_point(ts, aes, theme, interactive),
+            bar = fastqc_bar(ts, aes, theme, interactive)
         )
     pl
 }
@@ -131,20 +98,22 @@ plot_dup_stats <- function(..., interactive=TRUE,
       ][, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
     setnames(dup, "total_duplicate_percentage", "dup_percent")
     geom = match.arg(geom)
+
+    aes = list(
+            x = if(geom == "jitter") "group" else "sample_name", 
+            y = "dup_percent", 
+            sample_name = "sample_name", 
+            fill = "group"
+        )
+    theme = list(
+            xlab = if (geom == "jitter") "Groups" else "Sample", 
+            ylab = "Sequence duplication (in %)", 
+            title = "Sequence duplication among samples"
+        )
     pl = switch(geom, 
-            jitter = {
-                aes = list(x="group", y="dup_percent", 
-                            sample_name="sample_name", fill="group")
-                theme = list(xlab="Groups", ylab="Sequence duplication (in %)", 
-                            title="Sequence duplication among samples")
-                fastqc_jitter(dup, aes, theme, interactive)
-            }, 
-            point = {
-
-            }, 
-            bar = {
-
-            }
+            jitter = fastqc_jitter(dup, aes, theme, interactive), 
+            point = fastqc_point(dup, aes, theme, interactive),
+            bar = fastqc_bar(dup, aes, theme, interactive)
         )
     pl
 }
@@ -224,4 +193,50 @@ fastqc_jitter <- function(dt, aes, theme, interactive=TRUE) {
         ggtitle(theme$title)
 
     plotly::ggplotly(p, tooltip = c("sample", "y"))
+}
+
+fastqc_point <- function(dt, aes, theme, interactive=TRUE) {
+    p = ggplot(dt, aes_string(x=aes$x, y=aes$y)) + 
+        geom_point(aes_string(fill=aes$fill), shape=21L, size=4L) + 
+        ylim(0L, 100L) + xlab(theme$xlab) + ylab(theme$ylab) + theme_bw() + 
+        (if (max(dt$splits) == 1L)
+            facet_wrap(~ .id, scales="free_y", ncol=1L)
+        else  facet_wrap(splits ~ .id, scales="free_x", ncol=1L)) + 
+        theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
+            legend.text=element_text(size = 12L), 
+            legend.background=element_blank(),
+            legend.key=element_blank(),
+            panel.grid.major.y=element_line(
+                colour="#333333", size=0.12), 
+            panel.grid.major.x=element_blank(), 
+            panel.grid.minor=element_line(
+                colour="#999999", size=0.06), 
+            legend.position="bottom") + 
+        ggtitle(theme$title)
+    if (interactive)
+        p = plotly::ggplotly(p, tooltip = c("x", "y"))
+    p
+}
+
+fastqc_bar <- function(dt, aes, theme, interactive=TRUE) {
+    p = ggplot(dt, aes_string(x=aes$x, y=aes$y)) + 
+        geom_bar(stat="identity", aes_string(fill=aes$fill)) + 
+        ylim(0L, 100L) + xlab(theme$xlab) + ylab(theme$ylab) + theme_bw() + 
+        (if (max(dt$splits) == 1L)
+            facet_wrap(~ .id, scales="free_y", ncol=1L)
+        else  facet_wrap(splits ~ .id, scales="free_x", ncol=1L)) + 
+        theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
+            legend.text=element_text(size = 12L), 
+            legend.background=element_blank(),
+            legend.key=element_blank(),
+            panel.grid.major.y=element_line(
+                colour="#333333", size=0.12), 
+            panel.grid.major.x=element_blank(), 
+            panel.grid.minor=element_line(
+                colour="#999999", size=0.06), 
+            legend.position="bottom") + 
+        ggtitle(theme$title)
+    if (interactive)
+        p = plotly::ggplotly(p, tooltip = c("x", "y"))
+    p
 }

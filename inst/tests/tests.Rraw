@@ -11,7 +11,7 @@ if (!exists("test_ggfastqc", .GlobalEnv, inherits=FALSE)) {
 }
 
 sugg_pkgs = c("data.table", "ggplot2", "plotly", "RColorBrewer", 
-                "ggrepel", "Biobase")
+                "ggrepel")
 inst_pkgs = rownames(installed.packages())
 lapply(setNames(sugg_pkgs, nm = sugg_pkgs), function(pkg) if(pkg %in% 
     inst_pkgs) require(pkg, character.only=TRUE))
@@ -44,6 +44,32 @@ test(2.3, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=TRUE,
 test(2.4, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=FALSE, 
         geom="point"))), ggplot2_names)
 test(2.5, names(print(plot_gc_stats(Raw=fastqc_obj, interactive=FALSE, 
+        geom="bar"))), ggplot2_names)
+
+## total_sequence_stats ----------------------------------------
+test(3.1, names(print(plot_total_sequence_stats(Raw=fastqc_obj, 
+    interactive=TRUE, geom="jitter"))), plotly_names)
+test(3.2, names(print(plot_total_sequence_stats(Raw=fastqc_obj, 
+    interactive=TRUE, geom="point"))), plotly_names)
+test(3.3, names(print(plot_total_sequence_stats(Raw=fastqc_obj, 
+    interactive=TRUE, geom="bar"))), plotly_names, warning="applied to")
+test(3.4, names(print(plot_total_sequence_stats(Raw=fastqc_obj, 
+    interactive=FALSE, geom="point"))), ggplot2_names)
+test(3.5, names(print(plot_total_sequence_stats(Raw=fastqc_obj, 
+    interactive=FALSE, geom="bar"))), ggplot2_names)
+
+
+## dup_stats -------------------------------------------------
+
+test(4.1, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="jitter"))), plotly_names)
+test(4.2, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="point"))), plotly_names)
+test(4.3, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=TRUE, 
+        geom="bar"))), plotly_names, warning="applied to")
+test(4.4, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=FALSE, 
+        geom="point"))), ggplot2_names)
+test(4.5, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=FALSE, 
         geom="bar"))), ggplot2_names)
 
 ## test summary ----------------------------------------------
