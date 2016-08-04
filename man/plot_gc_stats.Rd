@@ -4,6 +4,6 @@
 \alias{plot_gc_stats}
 \title{Plot FastQC GC\% stats}
 \usage{
-plot_gc_stats(..., type = c("ggplot2", "rbokeh"))
+plot_gc_stats(..., interactive = TRUE, geom = c("jitter", "point", "bar"))
 }
 

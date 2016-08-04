@@ -4,6 +4,6 @@
 \alias{plot_total_sequence_stats}
 \title{Plot FastQC total sequences stats}
 \usage{
-plot_total_sequence_stats(..., type = c("ggplot2", "rbokeh"))
+plot_total_sequence_stats(..., type = c("ggplot2", "plotly"))
 }
 

@@ -4,6 +4,6 @@
 \alias{plot_sequence_quality}
 \title{Plot FastQC per base sequence quality}
 \usage{
-plot_sequence_quality(..., type = c("ggplot2", "rbokeh"))
+plot_sequence_quality(..., type = c("ggplot2", "plotly"))
 }
 
