@@ -40,11 +40,9 @@ generated will take it into account and \code{color} / \code{facet}
 accordingly.
 }
 \examples{
-\dontrun{
 require(ggfastqc)
 path = system.file("tests/fastqc-sample", package="ggfastqc")
 obj = fastqc(sample_info = file.path(path, "annotation.txt"))
-}
 }
 \seealso{
 \code{\link{plot_dup_stats}} \code{\link{plot_gc_stats}} 

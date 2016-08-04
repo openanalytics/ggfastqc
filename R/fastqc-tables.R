@@ -34,11 +34,9 @@
 #' \code{\link{plot_sequence_quality}} \code{\link{plot_total_sequence_stats}}
 #' @export
 #' @examples
-#' \dontrun{
 #' require(ggfastqc)
 #' path = system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj = fastqc(sample_info = file.path(path, "annotation.txt"))
-#' }
 fastqc <- function(sample_info) {
     info = fread(sample_info, colClasses=list(character=c("sample")))
     cols = c("sample", "pair", "path")
