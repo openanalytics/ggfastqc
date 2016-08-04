@@ -21,8 +21,8 @@ plot_gc_stats <- function(..., interactive=TRUE,
         jitter = {
             aes = list(x="group", y="percent_gc", 
                         sample_name="sample_name", fill="group")
-            theme = list(xlab="Sample", ylab="GC %", 
-                        title="GC content distribution among samples")
+            theme = list(xlab="Groups", ylab="GC %", 
+                        title="GC content among samples")
             fastqc_jitter(gc, aes, theme, interactive)
         }, 
         point = {
@@ -42,7 +42,7 @@ plot_gc_stats <- function(..., interactive=TRUE,
                     panel.grid.minor=element_line(
                         colour="#999999", size=0.06), 
                     legend.position="bottom") + 
-                ggtitle("GC content distribution among samples")
+                ggtitle("GC content among samples")
             if (interactive)
                 p = plotly::ggplotly(p, tooltip = c("x", "y"))
             p
@@ -64,7 +64,7 @@ plot_gc_stats <- function(..., interactive=TRUE,
                     panel.grid.minor=element_line(
                         colour="#999999", size=0.06), 
                     legend.position="bottom") + 
-                ggtitle("GC content distribution among samples")
+                ggtitle("GC content among samples")
             if (interactive)
                 p = plotly::ggplotly(p, tooltip = c("x", "y"))
             p
@@ -87,7 +87,10 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
     if (is.null(names(ll)))
         setattr(ts, 'names', paste0("fastqc_obj", seq_along(ll)))
     ts = rbindlist(ts, idcol=TRUE)
-    ts[, "total_sequences"  := total_sequences/1e6L # in million reads
+    cols = c("sample_name", "group", ".id")
+    as_factor <- function(x) factor(x, levels=unique(x))
+    ts[, (cols) := lapply(.SD, as_factor), .SDcols=cols
+      ][, "total_sequences"  := total_sequences/1e6L # in million reads
       ][, "splits" := findInterval(1:nrow(ts), seq(1, nrow(ts), by = 26L))]
     geom = match.arg(geom)
     pl = switch(geom, 
@@ -95,7 +98,7 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
                 aes = list(x="group", y="total_sequences", 
                             sample_name="sample_name", fill="group")
                 theme = list(xlab="Groups", ylab="Sequence count (in million)", 
-                            title="Sequence count distribution among samples")
+                            title="Sequence count among samples")
                 fastqc_jitter(ts, aes, theme, interactive)
             }, 
             point = {
@@ -105,46 +108,44 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
 
             }
         )
+    pl
 }
 
 #' @title Plot FastQC total sequences stats
 #' @export
-plot_dup_stats <- function(..., type=c("ggplot2", "plotly")) {
+plot_dup_stats <- function(..., interactive=TRUE, 
+                    geom=c("jitter", "point", "bar")) {
 
     ll = list(...)
     dup = lapply(ll, function(l) {
-              rbindlist(lapply(l, function(y) { 
-                v = y[["Sequence Duplication Levels"]][1]
-                col = grep("[pP]ercentage", names(v))
-                list(group=v$group, sample_group = v$sample_group, 
-                     sample_name=v$sample_name, pair = v$pair, 
-                    Duplication_Percent=as.numeric(names(v)[col+1L]))
-            }))
+            stopifnot(inherits(l, "fastqc"))
+            ans = l[param == "sequence_duplication_level_percent", value]
+            data.table::rbindlist(ans)
         })
     if (is.null(names(ll)))
-        setattr(dup, 'names', names(ll))
+        setattr(dup, 'names', paste0("fastqc_obj", seq_along(ll)))
     dup = rbindlist(dup, idcol=TRUE)
-    setnames(dup, "Duplication_Percent", "dup_percent")
-    dup[, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
-    type = match.arg(type)
-    if (!requireNamespace(ggplot2))
-        stop("Package 'ggplot2' is not available.")
-    pl = ggplot(dup, aes(x=sample_name, y=dup_percent)) + 
-            geom_bar(stat="identity", aes(fill=group, group=sample_name)) + 
-            ylim(0, 100) + 
-            facet_wrap(splits ~ .id, ncol=1L, scales="free_x") + 
-            theme_bw() + 
-            theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
-                axis.text.y = element_text(size = 14),  
-                text = element_text(size=18), 
-                panel.grid.major = element_blank()) + 
-            xlab("Sample") + ylab("Duplication %") + 
-            scale_fill_brewer(name="Group", palette="Set1")
-    if (type == "plotly") {
-        if (!requireNamespace(plotly))
-            stop("Package 'plotly' is not available.")
-        pl = plotly::ggplotly(pl)
-    }
+    cols = c("sample_name", "group", ".id")
+    as_factor <- function(x) factor(x, levels=unique(x))
+    dup[, (cols) := lapply(.SD, as_factor), .SDcols=cols
+      ][, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
+    setnames(dup, "total_duplicate_percentage", "dup_percent")
+    geom = match.arg(geom)
+    pl = switch(geom, 
+            jitter = {
+                aes = list(x="group", y="dup_percent", 
+                            sample_name="sample_name", fill="group")
+                theme = list(xlab="Groups", ylab="Sequence duplication (in %)", 
+                            title="Sequence duplication among samples")
+                fastqc_jitter(dup, aes, theme, interactive)
+            }, 
+            point = {
+
+            }, 
+            bar = {
+
+            }
+        )
     pl
 }
 
