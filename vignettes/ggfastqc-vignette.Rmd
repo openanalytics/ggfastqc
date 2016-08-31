@@ -1,0 +1,172 @@
+---
+title: "ggfastqc vignette"
+date: "`r Sys.Date()`"
+output: 
+  rmarkdown::html_document:
+    theme: spacelab
+    highlight: pygments
+    css : css/bootstrap.css
+vignette: >
+  %\VignetteIndexEntry{ggfastqc vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+```{r, echo = FALSE, message = FALSE}
+require(ggfastqc)
+knitr::opts_chunk$set(
+  comment = "#",
+  error = FALSE,
+  tidy = FALSE,
+  cache = FALSE,
+  collapse=TRUE)
+# options(datatable.auto.index=FALSE)
+```
+
+## ggfastqc package
+
+The `ggfastqc` package allows quick summary plots of 
+[FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
+reports from Next Generation Sequencing data.
+
+## Load fastqc report
+
+The `fastqc()` function loads data from FastQC generated reports via the 
+argument `sample_info` which should be a file containing info about samples.
+The file should contain at least these three columns:
+
+* `sample` -- contains the sample name.
+
+* `pair` -- in case of paired end reads, `1` or `2` corresponding to first and 
+second pair, and in case of single end reads, `NA`.
+
+* `path` -- full path to the fastqc summary report (.txt file) for each sample.
+
+    If just the file name (`.txt`) is provided, it is assumed that the file is 
+    in the same folder as the input file provided to `sample_info` argument.
+
+It can also optionally contain a `group` column. If present, the plots 
+generated will take it into account and *color* / *facet* accordingly.
+
+### Sample annotation file
+
+```{r, echo=TRUE, eval=FALSE}
+path = system.file("tests/fastqc-sample", package="ggfastqc")
+ann_file = file.path(path, "annotation.txt")
+```
+
+```{r, echo=FALSE, eval=TRUE}
+path = "./"
+ann_file = file.path(path, "annotation.txt")
+```
+
+Here's how an annotation file might look like.
+
+```{r}
+data.table::fread(ann_file)
+```
+
+### Using `fastqc()` to load reports
+
+```{r}
+obj = fastqc(ann_file)
+obj
+class(obj)
+```
+
+#### {.bs-callout .bs-callout-info}
+
+* `obj` is an object of class `fastqc`.
+
+* Each element of `value` is itself a *data.table*.
+
+## GC stats
+
+`plot_gc_stats()` provides a plot of GC percentage in each of the samples. By 
+default the argument `interactive = TRUE`, in which case it will try to plot a 
+*jitter* plot using the `plotly` package. Jitter plots are possible only when 
+`interactive = TRUE`.
+
+The other two types of plots possible are `point` and `bar`. Plots can be 
+interactive or static for these two types of plots. If static, the function 
+returns a `ggplot2` plot.
+
+### Interative plot using `plotly`
+
+```{r, echo=TRUE, eval=FALSE}
+plot_gc_stats(sample=obj)
+```
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE}
+pl = plot_gc_stats(sample=obj)
+ll = htmltools::tagList()
+ll[[1L]] = plotly::as.widget(pl)
+ll
+```
+
+Note that the facet is automatically named `sample` which was the name 
+provided to the input argument. More than one such `fastqc` object can be 
+provided to a single function to generate facetted plot as shown above, for 
+e.g., `plot_gc_stats(s1 = obj1, s2 = obj2)`.
+
+Using `interactive=FALSE` would result in a static `ggplot2` plot, but `jitter` 
+geom is not possible then.
+
+
+### Static plot using `ggplot2`
+
+```{r}
+plot_gc_stats(sample=obj, interactive=FALSE, geom="point") # or "bar"
+```
+
+## Total sequenced reads
+
+`plot_total_sequence_stats()` provides a plot of total reads sequenced. The 
+usage is also identical to `plot_gc_stats`.
+
+### Interative plot using `plotly`
+
+```{r, echo=TRUE, eval=FALSE}
+plot_total_sequence_stats(sample=obj)
+```
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE}
+pl = plot_total_sequence_stats(sample=obj)
+ll = htmltools::tagList()
+ll[[1L]] = plotly::as.widget(pl)
+ll
+```
+
+### Static plot using `ggplot2`
+
+```{r}
+plot_total_sequence_stats(sample=obj, interactive=FALSE, geom="bar") # or "point"
+```
+
+## Per base sequence quality
+
+`plot_sequence_quality()` provides a plot of per base sequence quality. The only 
+geom implemented is `line`. Both interactive and non-interactive plots are 
+possible, as shown below.
+
+### Interative plot using `plotly`
+
+```{r, echo=TRUE, eval=FALSE}
+plot_sequence_quality(sample=obj)
+```
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE}
+pl = plot_sequence_quality(sample=obj)
+ll = htmltools::tagList()
+ll[[1L]] = plotly::as.widget(pl)
+ll
+```
+
+### Static plot using `ggplot2`
+
+```{r}
+plot_sequence_quality(sample=obj, interactive=FALSE)
+```
+
+***
+
