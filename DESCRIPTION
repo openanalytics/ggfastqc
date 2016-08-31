@@ -18,7 +18,11 @@ Suggests:
     ggrepel,
     htmltools,
     RColorBrewer,
-    knitr
+    knitr,
+    gread,
+    gcount,
+    ganalyse,
+    ggqualimap
 Description: Plot of FASTQ file summaries created by FastQC tool.
 License: GPL-3
 lazyData: true
