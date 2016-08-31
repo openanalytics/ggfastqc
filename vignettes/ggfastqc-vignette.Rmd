@@ -27,7 +27,22 @@ knitr::opts_chunk$set(
 
 The `ggfastqc` package allows quick summary plots of 
 [FastQC](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) 
-reports from Next Generation Sequencing data.
+reports from Next Generation Sequencing data. 
+
+There are four functions for plotting various summary statistics:
+
+* `plot_gc_stats()` -- GC percentage
+
+* `plot_dup_stats()` -- Sequence duplication percentage
+
+* `plot_total_sequence_stats()` -- Total sequenced reads
+
+* `plot_sequence_quality()` -- Per base sequence quality
+
+The function `fastqc()` loads the entire report as an object of class `fastqc` 
+which can be used to generate any additional plots that are required.
+
+***
 
 ## Load fastqc report
 
@@ -117,6 +132,30 @@ geom is not possible then.
 
 ```{r}
 plot_gc_stats(sample=obj, interactive=FALSE, geom="point") # or "bar"
+```
+
+## Sequence duplication percentage
+
+`plot_dup_stats()` provides a plot of total reads sequenced. The 
+usage is also identical to `plot_gc_stats`.
+
+### Interative plot using `plotly`
+
+```{r, echo=TRUE, eval=FALSE}
+plot_dup_stats(sample=obj)
+```
+
+```{r, echo=FALSE, eval=TRUE, message=FALSE}
+pl = plot_dup_stats(sample=obj)
+ll = htmltools::tagList()
+ll[[1L]] = plotly::as.widget(pl)
+ll
+```
+
+### Static plot using `ggplot2`
+
+```{r}
+plot_dup_stats(sample=obj, interactive=FALSE, geom="point") # or "bar"
 ```
 
 ## Total sequenced reads
