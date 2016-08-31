@@ -4,6 +4,38 @@
 \alias{plot_sequence_quality}
 \title{Plot FastQC per base sequence quality}
 \usage{
-plot_sequence_quality(..., type = c("ggplot2", "plotly"))
+plot_sequence_quality(..., interactive = TRUE, geom = c("line"))
+}
+\arguments{
+\item{interactive}{logical, default is \code{TRUE}, which returns an 
+\emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+static \code{ggplot2} plot.}
+
+\item{geom}{Only possible value is \code{"line"}.}
+
+\item{\dots}{The set of \code{fastqc} objects to plot, usually of the 
+form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+\code{examples}. The names will be used as title for facets.}
+}
+\description{
+This function plots the per base sequence quality across 
+samples. If info regarding the \code{group} each \code{sample} belongs to 
+is also available, then the generated plot will take that into account to 
+colour / facet accordingly.
+}
+\examples{
+require(ggfastqc)
+path <- system.file("tests/fastqc-sample", package="ggfastqc")
+obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+
+# interactive = TRUE (plotly)
+plot_sequence_quality_stats(sample = obj)
+
+# interactive = FALSE (ggplot2)
+plot_sequence_quality_stats(sample = obj, interactive = FALSE)
+}
+\seealso{
+\code{\link{fastqc}} \code{\link{plot_dup_stats}}
+\code{\link{plot_total_sequence_stats}} \code{\link{plot_gc_stats}}
 }
 

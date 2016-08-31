@@ -1,4 +1,37 @@
 #' @title Plot FastQC GC\% stats
+#' 
+#' @description This function plots the \code{GC\%} of each of the samples. If 
+#' info regarding the \code{group} each \code{sample} belongs to is also 
+#' available, then the generated plot will take that into account to colour / 
+#' facet accordingly.
+#' 
+#' @param \dots The set of \code{fastqc} objects to plot, usually of the 
+#' form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+#' \code{examples}. The names will be used as title for facets.
+#' @param interactive logical, default is \code{TRUE}, which returns an 
+#' \emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+#' static \code{ggplot2} plot.
+#' @param geom Possible values are \code{"jitter"} (default), \code{"point"} 
+#' and \code{"bar"}. \code{"jitter"} is only possible for 
+#' \code{interactive = TRUE}, and is usually the preferred option since it 
+#' provides the lowest ink ratio, and contains the least amount of clutter.
+#' 
+#' @examples
+#' require(ggfastqc)
+#' path <- system.file("tests/fastqc-sample", package="ggfastqc")
+#' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+#' 
+#' # interactive = TRUE (plotly)
+#' plot_gc_stats(sample = obj) # jitter
+#' plot_gc_stats(sample = obj, geom = "point")
+#' plot_gc_stats(sample = obj, geom = "bar")
+#' 
+#' # interactive = FALSE (ggplot2)
+#' plot_gc_stats(sample = obj, interactive = FALSE) # jitter
+#' plot_gc_stats(sample = obj, interactive = FALSE, geom = "point")
+#' plot_gc_stats(sample = obj, interactive = FALSE, geom = "bar")
+#' @seealso \code{\link{fastqc}} \code{\link{plot_dup_stats}}
+#' \code{\link{plot_sequence_quality}} \code{\link{plot_total_sequence_stats}}
 #' @export
 plot_gc_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
@@ -39,6 +72,39 @@ plot_gc_stats <- function(..., interactive=TRUE,
 }
 
 #' @title Plot FastQC total sequences stats
+#' 
+#' @description This function plots the total sequences across samples. If 
+#' info regarding the \code{group} each \code{sample} belongs to is also 
+#' available, then the generated plot will take that into account to colour / 
+#' facet accordingly.
+#' 
+#' @param \dots The set of \code{fastqc} objects to plot, usually of the 
+#' form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+#' \code{examples}. The names will be used as title for facets.
+#' @param interactive logical, default is \code{TRUE}, which returns an 
+#' \emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+#' static \code{ggplot2} plot.
+#' @param geom Possible values are \code{"jitter"} (default), \code{"point"} 
+#' and \code{"bar"}. \code{"jitter"} is only possible for 
+#' \code{interactive = TRUE}, and is usually the preferred option since it 
+#' provides the lowest ink ratio, and contains the least amount of clutter.
+#' 
+#' @examples
+#' require(ggfastqc)
+#' path <- system.file("tests/fastqc-sample", package="ggfastqc")
+#' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+#' 
+#' # interactive = TRUE (plotly)
+#' plot_total_sequence_stats(sample = obj) # geom = "jitter" (default)
+#' plot_total_sequence_stats(sample = obj, geom = "point")
+#' plot_total_sequence_stats(sample = obj, geom = "bar")
+#' 
+#' # interactive = FALSE (ggplot2)
+#' plot_total_sequence_stats(sample = obj, interactive = FALSE) # jitter
+#' plot_total_sequence_stats(sample = obj, interactive = FALSE, geom = "point")
+#' plot_total_sequence_stats(sample = obj, interactive = FALSE, geom = "bar")
+#' @seealso \code{\link{fastqc}} \code{\link{plot_dup_stats}}
+#' \code{\link{plot_sequence_quality}} \code{\link{plot_gc_stats}}
 #' @export
 plot_total_sequence_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
@@ -78,7 +144,40 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
     pl
 }
 
-#' @title Plot FastQC total sequences stats
+#' @title Plot FastQC duplication percent stats
+#' 
+#' @description This function plots the duplication percent across samples. If 
+#' info regarding the \code{group} each \code{sample} belongs to is also 
+#' available, then the generated plot will take that into account to colour / 
+#' facet accordingly.
+#' 
+#' @param \dots The set of \code{fastqc} objects to plot, usually of the 
+#' form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+#' \code{examples}. The names will be used as title for facets.
+#' @param interactive logical, default is \code{TRUE}, which returns an 
+#' \emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+#' static \code{ggplot2} plot.
+#' @param geom Possible values are \code{"jitter"} (default), \code{"point"} 
+#' and \code{"bar"}. \code{"jitter"} is only possible for 
+#' \code{interactive = TRUE}, and is usually the preferred option since it 
+#' provides the lowest ink ratio, and contains the least amount of clutter.
+#' 
+#' @examples
+#' require(ggfastqc)
+#' path <- system.file("tests/fastqc-sample", package="ggfastqc")
+#' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+#' 
+#' # interactive = TRUE (plotly)
+#' plot_dup_stats(sample = obj) # geom = "jitter" (default)
+#' plot_dup_stats(sample = obj, geom = "point")
+#' plot_dup_stats(sample = obj, geom = "bar")
+#' 
+#' # interactive = FALSE (ggplot2)
+#' plot_dup_stats(sample = obj, interactive = FALSE) # jitter
+#' plot_dup_stats(sample = obj, interactive = FALSE, geom = "point")
+#' plot_dup_stats(sample = obj, interactive = FALSE, geom = "bar")
+#' @seealso \code{\link{fastqc}} \code{\link{plot_total_sequence_stats}}
+#' \code{\link{plot_sequence_quality}} \code{\link{plot_gc_stats}}
 #' @export
 plot_dup_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
@@ -119,49 +218,73 @@ plot_dup_stats <- function(..., interactive=TRUE,
 }
 
 #' @title Plot FastQC per base sequence quality
+#' 
+#' @description This function plots the per base sequence quality across 
+#' samples. If info regarding the \code{group} each \code{sample} belongs to 
+#' is also available, then the generated plot will take that into account to 
+#' colour / facet accordingly.
+#' 
+#' @param \dots The set of \code{fastqc} objects to plot, usually of the 
+#' form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+#' \code{examples}. The names will be used as title for facets.
+#' @param interactive logical, default is \code{TRUE}, which returns an 
+#' \emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+#' static \code{ggplot2} plot.
+#' @param geom Only possible value is \code{"line"}.
+#' 
+#' @examples
+#' require(ggfastqc)
+#' path <- system.file("tests/fastqc-sample", package="ggfastqc")
+#' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+#' 
+#' # interactive = TRUE (plotly)
+#' plot_sequence_quality_stats(sample = obj)
+#' 
+#' # interactive = FALSE (ggplot2)
+#' plot_sequence_quality_stats(sample = obj, interactive = FALSE)
+#' @seealso \code{\link{fastqc}} \code{\link{plot_dup_stats}}
+#' \code{\link{plot_total_sequence_stats}} \code{\link{plot_gc_stats}}
 #' @export
-plot_sequence_quality <- function(..., type=c("ggplot2", "plotly")) {
+plot_sequence_quality <- function(..., interactive=TRUE, geom=c("line")) {
 
     ll = list(...)
-    seqn = lapply(ll, function(l) 
-            rbindlist(lapply(l, `[[`, "Per base sequence quality")))
+    seqn = lapply(ll, function(l) {
+            stopifnot(inherits(l, "fastqc"))
+            ans = l[param == "per_base_sequence_quality", value]
+            data.table::rbindlist(ans)
+        })
     if (is.null(names(ll)))
-        setattr(seqn, 'names', names(ll))
+        setattr(seqn, 'names', paste0("fastqc_obj", seq_along(ll)))
     seqn = rbindlist(seqn, idcol=TRUE)
-    cols = c(".id", "group", "sample_group", "sample_name", "pair", "#Base")
-    cols = setdiff(names(seqn), cols)
-    fac2num <- function(x) as.numeric(as.character(x))
-    seqn[, (cols) := lapply(.SD, fac2num), .SDcols=cols]
-    seqn[, pair := factor(pair)
-        ][, `#Base` := factor(`#Base`, levels=unique(`#Base`))]
+    seqn[, base_int := as.integer(gsub("_.*$", "", base))]
+    cols = c("sample_name", "group", ".id", "pair")
+    as_factor <- function(x) factor(x, levels=unique(x))
+    seqn[, (cols) := lapply(.SD, as_factor), .SDcols=cols]
     val = rep(1:uniqueN(seqn[["sample_name"]]), 
             each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
     seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 26L))]
-    type = match.arg(type)
-    if (!requireNamespace(ggplot2))
-        stop("Package 'ggplot2' is not available.")
-    pl = ggplot(seqn, aes(x=`#Base`, colour=pair, group=sample_name)) + 
-            geom_point(aes(y=Median)) + 
-            geom_errorbar(aes(ymax=`90th Percentile`, ymin=`10th Percentile`))+
-            geom_line(aes(y=Mean, group=sample_name)) + 
-            facet_wrap(splits ~ .id, scales="free_x", ncol=1L) + 
-            geom_hline(aes(yintercept=30L), colour="gray25", linetype="dotted")+
-            theme_bw() + 
-            theme(axis.text.x = element_text(angle = 45L, hjust = 1, size=14), 
-                axis.text.y = element_text(size = 14),  
-                text = element_text(size=18), 
-                panel.grid.major = element_blank()) + 
-            xlab("#Base") + ylab("Read quality") + 
-            ylim(0L, max(seqn$Mean, na.rm=TRUE)+1L) + 
-            scale_colour_brewer(name="Pair", palette="Set1")
-    if (type == "plotly") {
-        if (!requireNamespace(plotly))
-            stop("Package 'plotly' is not available.")
-        pl = plotly::ggplotly(pl)
-    }
+    geom = match.arg(geom)
+
+    aes = list(
+            x = "base_int",  
+            y = "mean", 
+            colour = "pair", 
+            group = "sample_name", 
+            ymax = "`90th_percentile`", 
+            ymin = "`10th_percentile`", 
+            sample_name = "sample_name", 
+            base = "base"
+        )
+    theme = list(
+            xlab = "# Base", 
+            ylab = "Read quality", 
+            title = "Per base sequence quality"
+        )
+    pl = switch(geom, 
+            line = fastqc_errorbar(seqn, aes, theme, interactive), 
+        )
     pl
 }
-
 
 ## internal geoms ----------------------- 
 
@@ -213,8 +336,11 @@ fastqc_point <- function(dt, aes, theme, interactive=TRUE) {
                 colour="#999999", size=0.06), 
             legend.position="bottom") + 
         ggtitle(theme$title)
-    if (interactive)
+    if (interactive) {
+        if (!requireNamespace("plotly"))
+            stop("Package 'plotly' is not available.")
         p = plotly::ggplotly(p, tooltip = c("x", "y"))
+    }
     p
 }
 
@@ -236,7 +362,44 @@ fastqc_bar <- function(dt, aes, theme, interactive=TRUE) {
                 colour="#999999", size=0.06), 
             legend.position="bottom") + 
         ggtitle(theme$title)
-    if (interactive)
+    if (interactive) {
+        if (!requireNamespace("plotly"))
+            stop("Package 'plotly' is not available.")
         p = plotly::ggplotly(p, tooltip = c("x", "y"))
+    }
+    p
+}
+
+fastqc_errorbar <- function(dt, aes, theme, interactive=TRUE) {
+    p = ggplot(dt, aes_string(x=aes$x, colour=aes$colour, group=aes$group, 
+            sample_name=aes$sample_name, percentile_10=aes$ymin, 
+            percentile_90=aes$ymax, base=aes$base)) + 
+        geom_point(aes_string(y=aes$y)) + 
+        geom_errorbar(aes_string(ymax=aes$ymax, ymin=aes$ymin))+
+        geom_line(aes_string(y=aes$y, group=aes$group)) + 
+        (if (max(dt$splits) == 1L)
+            facet_wrap(~ .id, scales="free_y", ncol=1L)
+        else  facet_wrap(splits ~ .id, scales="free_x", ncol=1L)) + 
+        geom_hline(aes(yintercept=30L), colour="gray25", linetype="dotted") + 
+        ylim(0, max(dt$mean, na.rm=TRUE)+1L) + 
+        xlab(theme$xlab) + ylab(theme$ylab) + theme_bw() + 
+        theme(axis.text.x = element_text(angle = 45L, hjust = 1L), 
+            legend.text=element_text(size = 12L), 
+            legend.background=element_blank(),
+            legend.key=element_blank(),
+            panel.grid.major.y=element_line(
+                colour="#333333", size=0.12), 
+            panel.grid.major.x=element_blank(), 
+            panel.grid.minor=element_line(
+                colour="#999999", size=0.06)) + 
+        ggtitle(theme$title)
+    if (interactive) {
+        if (!requireNamespace("plotly"))
+            stop("Package 'plotly' is not available.")
+        # no error bars in plotly yet.. tooltip includes base#, 
+        # 10th and 90th percentile
+        p = plotly::ggplotly(p, tooltip = 
+                c("sample_name", "base", "percentile_10", "percentile_90"))
+    }
     p
 }

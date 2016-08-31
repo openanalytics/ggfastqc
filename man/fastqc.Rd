@@ -13,7 +13,7 @@ fastqc(sample_info)
 \description{
 \code{fastqc} function parses all the summary statistics of 
 reports produced by \code{FastQC} tool and returns a \code{data.table} with 
-two columns: \code{param}, and \code{value}. 
+two columns: \code{param} and \code{value}. 
 
 Each row of the \code{value} column contains the data corresponding to that 
 \code{param}, and is itself 

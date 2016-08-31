@@ -5,10 +5,8 @@ if (!exists("test_ggfastqc", .GlobalEnv, inherits=FALSE)) {
     options(warn=0L) # use require() to warn but not halt if not available
     .devtesting=FALSE
 
-    test    = ggfastqc:::test
-} else {
-    .devtesting=TRUE
-}
+    test = ggfastqc:::test
+} else .devtesting=TRUE
 
 sugg_pkgs = c("data.table", "ggplot2", "plotly", "RColorBrewer", 
                 "ggrepel")
@@ -71,6 +69,13 @@ test(4.4, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=FALSE,
         geom="point"))), ggplot2_names)
 test(4.5, names(print(plot_dup_stats(Raw=fastqc_obj, interactive=FALSE, 
         geom="bar"))), ggplot2_names)
+
+## per_base_sequence_quality ---------------------------------
+
+test(5.1, names(print(plot_sequence_quality(Raw=fastqc_obj, interactive=TRUE, 
+        geom="line"))), plotly_names)
+test(5.2, names(print(plot_sequence_quality(Raw=fastqc_obj, interactive=FALSE, 
+        geom="line"))), ggplot2_names)
 
 ## test summary ----------------------------------------------
 options(warn=0L)

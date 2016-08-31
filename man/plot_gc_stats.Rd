@@ -6,4 +6,43 @@
 \usage{
 plot_gc_stats(..., interactive = TRUE, geom = c("jitter", "point", "bar"))
 }
+\arguments{
+\item{interactive}{logical, default is \code{TRUE}, which returns an 
+\emph{interactive} \code{plotly} plot. If \code{FALSE}, it returns a 
+static \code{ggplot2} plot.}
+
+\item{geom}{Possible values are \code{"jitter"} (default), \code{"point"} 
+and \code{"bar"}. \code{"jitter"} is only possible for 
+\code{interactive = TRUE}, and is usually the preferred option since it 
+provides the lowest ink ratio, and contains the least amount of clutter.}
+
+\item{\dots}{The set of \code{fastqc} objects to plot, usually of the 
+form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
+\code{examples}. The names will be used as title for facets.}
+}
+\description{
+This function plots the \code{GC\%} of each of the samples. If 
+info regarding the \code{group} each \code{sample} belongs to is also 
+available, then the generated plot will take that into account to colour / 
+facet accordingly.
+}
+\examples{
+require(ggfastqc)
+path <- system.file("tests/fastqc-sample", package="ggfastqc")
+obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
+
+# interactive = TRUE (plotly)
+plot_gc_stats(sample = obj) # jitter
+plot_gc_stats(sample = obj, geom = "point")
+plot_gc_stats(sample = obj, geom = "bar")
+
+# interactive = FALSE (ggplot2)
+plot_gc_stats(sample = obj, interactive = FALSE) # jitter
+plot_gc_stats(sample = obj, interactive = FALSE, geom = "point")
+plot_gc_stats(sample = obj, interactive = FALSE, geom = "bar")
+}
+\seealso{
+\code{\link{fastqc}} \code{\link{plot_dup_stats}}
+\code{\link{plot_sequence_quality}} \code{\link{plot_total_sequence_stats}}
+}
 
