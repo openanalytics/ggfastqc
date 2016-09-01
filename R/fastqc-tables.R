@@ -32,9 +32,11 @@
 #' 
 #' @seealso \code{\link{plot_dup_stats}} \code{\link{plot_gc_stats}} 
 #' \code{\link{plot_sequence_quality}} \code{\link{plot_total_sequence_stats}}
+#' @return An object of class \code{fastqc} which inherits from 
+#' \code{"data.table"}, with two columns: \code{param} and \code{value}, where 
+#' \code{value} is a list of \code{"data.table"}s.
 #' @export
 #' @examples
-#' require(ggfastqc)
 #' path = system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj = fastqc(sample_info = file.path(path, "annotation.txt"))
 fastqc <- function(sample_info) {
@@ -43,6 +45,7 @@ fastqc <- function(sample_info) {
     rest = setdiff(cols, names(info))
     if (length(rest)) stop("Columns [", paste(rest, collapse=","), 
         "] not found in file provided to argument 'sample_info'.")
+    pair = group = path = NULL
     pair_uniq = sort(unique(info[["pair"]]))
     if (length(pair_uniq) == 1L && !is.na(pair_uniq)) {
         if (pair_uniq != 1L) stop("Pair column must be NA for single end ", 
@@ -54,7 +57,7 @@ fastqc <- function(sample_info) {
         stop("Pair column must be NA for single end reads, ", "
                 and 1 or 2 for paired end reads.")
     }
-    if (is.null(info[["group"]])) info[, group := ""]
+    if (is.null(info[["group"]])) info[, "group" := ""]
     samples = if (length(pair_uniq) == 1L) info[["sample"]] 
                 else info[, paste(sample, pair, sep="_")]
     # set paths correctly, if necessary
@@ -77,6 +80,7 @@ fastqc <- function(sample_info) {
 #' \code{path}, \code{extract_summary_tables} extracts all summary statistics 
 #' and returns them as a list of \code{data.table}s.
 #' 
+#' @return A list of data.tables.
 #' @param doc The file corresponding to \emph{that \code{sample}} read in 
 #' as such (using \code{readLines}).
 #' @param sample Sample name.
@@ -120,9 +124,9 @@ extract_summary_tables <- function(doc, sample, pair, group) {
             ans[, (chr_cols) := lapply(.SD, fix_style), .SDcols=chr_cols]
         }
         # add sample_group, pair and group cols
-        ans[, c("sample_group", "pair") := .(sample, pair)]
-        if (!is.na(pair)) ans[, sample_name := paste(sample, pair, sep="_")]
-        ans[, group := group]
+        ans[, c("sample_group", "pair") := list(sample, pair)]
+        if (!is.na(pair)) ans[, "sample_name" := paste(sample, pair, sep="_")]
+        ans[, "group" := group]
         # lowercase colnames and fix them to be proper
         setnames(ans, fix_style(names(ans)))
         # convert sequences to lowercase as well
@@ -164,6 +168,7 @@ extract_summary_tables <- function(doc, sample, pair, group) {
 
 massage_table <- function(x) {
 
+    measure=NULL
     # widen basic statistics table and set column types properly
     y = x[["basic_statistics"]]
     y[, "measure" := gsub("[ ]+", "_", tolower(measure))]

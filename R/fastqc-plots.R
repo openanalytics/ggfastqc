@@ -16,8 +16,8 @@
 #' \code{interactive = TRUE}, and is usually the preferred option since it 
 #' provides the lowest ink ratio, and contains the least amount of clutter.
 #' 
+#' @return The plot object
 #' @examples
-#' require(ggfastqc)
 #' path <- system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
 #' 
@@ -36,6 +36,7 @@
 plot_gc_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
 
+    param=value=NULL
     ll = list(...)
     gc = lapply(ll, function(l) {
             stopifnot(inherits(l, "fastqc"))
@@ -89,8 +90,8 @@ plot_gc_stats <- function(..., interactive=TRUE,
 #' \code{interactive = TRUE}, and is usually the preferred option since it 
 #' provides the lowest ink ratio, and contains the least amount of clutter.
 #' 
+#' @return The plot object
 #' @examples
-#' require(ggfastqc)
 #' path <- system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
 #' 
@@ -109,6 +110,7 @@ plot_gc_stats <- function(..., interactive=TRUE,
 plot_total_sequence_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
 
+    param=value=total_sequences=NULL
     ll = list(...)
     ts = lapply(ll, function(l) {
             stopifnot(inherits(l, "fastqc"))
@@ -162,8 +164,8 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
 #' \code{interactive = TRUE}, and is usually the preferred option since it 
 #' provides the lowest ink ratio, and contains the least amount of clutter.
 #' 
+#' @return The plot object
 #' @examples
-#' require(ggfastqc)
 #' path <- system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
 #' 
@@ -182,6 +184,7 @@ plot_total_sequence_stats <- function(..., interactive=TRUE,
 plot_dup_stats <- function(..., interactive=TRUE, 
                     geom=c("jitter", "point", "bar")) {
 
+    param=value=NULL
     ll = list(...)
     dup = lapply(ll, function(l) {
             stopifnot(inherits(l, "fastqc"))
@@ -194,7 +197,7 @@ plot_dup_stats <- function(..., interactive=TRUE,
     cols = c("sample_name", "group", ".id")
     as_factor <- function(x) factor(x, levels=unique(x))
     dup[, (cols) := lapply(.SD, as_factor), .SDcols=cols
-      ][, splits := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
+      ][, "splits" := findInterval(1:nrow(dup), seq(1, nrow(dup), by = 26L))]
     setnames(dup, "total_duplicate_percentage", "dup_percent")
     geom = match.arg(geom)
 
@@ -232,21 +235,22 @@ plot_dup_stats <- function(..., interactive=TRUE,
 #' static \code{ggplot2} plot.
 #' @param geom Only possible value is \code{"line"}.
 #' 
+#' @return The plot object
 #' @examples
-#' require(ggfastqc)
 #' path <- system.file("tests/fastqc-sample", package="ggfastqc")
 #' obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
 #' 
 #' # interactive = TRUE (plotly)
-#' plot_sequence_quality_stats(sample = obj)
+#' plot_sequence_quality(sample = obj)
 #' 
 #' # interactive = FALSE (ggplot2)
-#' plot_sequence_quality_stats(sample = obj, interactive = FALSE)
+#' plot_sequence_quality(sample = obj, interactive = FALSE)
 #' @seealso \code{\link{fastqc}} \code{\link{plot_dup_stats}}
 #' \code{\link{plot_total_sequence_stats}} \code{\link{plot_gc_stats}}
 #' @export
 plot_sequence_quality <- function(..., interactive=TRUE, geom=c("line")) {
 
+    param=value=base=NULL
     ll = list(...)
     seqn = lapply(ll, function(l) {
             stopifnot(inherits(l, "fastqc"))
@@ -256,13 +260,13 @@ plot_sequence_quality <- function(..., interactive=TRUE, geom=c("line")) {
     if (is.null(names(ll)))
         setattr(seqn, 'names', paste0("fastqc_obj", seq_along(ll)))
     seqn = rbindlist(seqn, idcol=TRUE)
-    seqn[, base_int := as.integer(gsub("_.*$", "", base))]
+    seqn[, "base_int" := as.integer(gsub("_.*$", "", base))]
     cols = c("sample_name", "group", ".id", "pair")
     as_factor <- function(x) factor(x, levels=unique(x))
     seqn[, (cols) := lapply(.SD, as_factor), .SDcols=cols]
     val = rep(1:uniqueN(seqn[["sample_name"]]), 
             each=nrow(seqn)/uniqueN(seqn[["sample_name"]]))
-    seqn[, splits := findInterval(val, seq(1, nrow(seqn), by = 26L))]
+    seqn[, "splits" := findInterval(val, seq(1, nrow(seqn), by = 26L))]
     geom = match.arg(geom)
 
     aes = list(

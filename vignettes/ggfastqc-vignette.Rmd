@@ -63,6 +63,10 @@ second pair, and in case of single end reads, `NA`.
 It can also optionally contain a `group` column. If present, the plots 
 generated will take it into account and *color* / *facet* accordingly.
 
+#### Note: {.bs-callout .bs-callout-warning}
+
+It is recommended to have a *group* column.
+
 ### Sample annotation file
 
 ```{r, echo=TRUE, eval=FALSE}

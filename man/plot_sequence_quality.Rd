@@ -17,6 +17,9 @@ static \code{ggplot2} plot.}
 form \code{sample_name_1 = obj1}, \code{sample_name_2 = obj2}, etc. See 
 \code{examples}. The names will be used as title for facets.}
 }
+\value{
+The plot object
+}
 \description{
 This function plots the per base sequence quality across 
 samples. If info regarding the \code{group} each \code{sample} belongs to 
@@ -24,15 +27,14 @@ is also available, then the generated plot will take that into account to
 colour / facet accordingly.
 }
 \examples{
-require(ggfastqc)
 path <- system.file("tests/fastqc-sample", package="ggfastqc")
 obj <- fastqc(sample_info = file.path(path, "annotation.txt"))
 
 # interactive = TRUE (plotly)
-plot_sequence_quality_stats(sample = obj)
+plot_sequence_quality(sample = obj)
 
 # interactive = FALSE (ggplot2)
-plot_sequence_quality_stats(sample = obj, interactive = FALSE)
+plot_sequence_quality(sample = obj, interactive = FALSE)
 }
 \seealso{
 \code{\link{fastqc}} \code{\link{plot_dup_stats}}

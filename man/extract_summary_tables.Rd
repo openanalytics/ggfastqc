@@ -16,6 +16,9 @@ as such (using \code{readLines}).}
 
 \item{group}{Group / condition this sample belongs to.}
 }
+\value{
+A list of data.tables.
+}
 \description{
 \bold{NOTE:} For internal use only.
 
